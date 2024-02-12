@@ -59,7 +59,8 @@ def sign_in():
             # flash(f"Welcome {username}!")
             return redirect(url_for('home'))
         else:
-            return render_template("sign-in.html", title="Log In", error="t")
+            flash(f"User account not found.")
+            return render_template("sign-in.html", title="Sign In")
     else:
         return render_template("sign-in.html", title="Sign In")
 
