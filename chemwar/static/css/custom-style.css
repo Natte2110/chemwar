@@ -45,6 +45,11 @@ main {
   background-size: cover;
 }
 
+.bg-topbar {
+  box-shadow: inset 10px 0px 160px -57px rgb(31 30 30);
+  background-color: var(--base-color);
+}
+
 .sign-in-container {
   height: calc(100vh - 4.375rem);
   width: 100%;
