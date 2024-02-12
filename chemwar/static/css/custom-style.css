@@ -1,3 +1,7 @@
+:root {
+  --base-color: #171717;
+}
+
 html,
 body {
   padding: 0;
@@ -29,4 +33,89 @@ body {
 
 #maps {
   height: 100%;
+}
+
+main {
+  height: calc(100vh - 4.375rem);
+}
+
+.bg-navbar {
+  background-color: var(--base-color);
+  /* background-image: linear-gradient(180deg, #666562 10%, #363534 100%); */
+  background-size: cover;
+}
+
+.sign-in-container {
+  height: calc(100vh - 4.375rem);
+  width: 100%;
+  padding: 5rem;
+  background: linear-gradient(
+      to bottom,
+      rgba(92, 77, 66, 0.8) 0%,
+      rgba(92, 77, 66, 0.8) 100%
+    ),
+    url(../media/sign-in-background.webp);
+  background-size: cover;
+}
+
+.sign-in-container form {
+  background-color: var(--base-color);
+  margin-top: 50vh;
+  padding: 1rem;
+  min-width: 80%;
+  margin: auto;
+  border-radius: 10px;
+  color: white;
+}
+
+.sign-in-container form .field {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 25px;
+  padding: 0.6em;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #171717;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.sign-in-container form input {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #d3d3d3;
+}
+
+.sign-in-container form button {
+  padding: 0.5em;
+  padding-left: 1.1em;
+  padding-right: 1.1em;
+  border-radius: 5px;
+  margin-right: 0.5em;
+  border: none;
+  outline: none;
+  transition: .2s ease-in-out;
+  background-color: #252525;
+  color: white;
+  margin-top: 1rem;
+}
+
+.sign-in-container form button:hover {
+  background-color: black;
+  color: white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px #23232329;
 }
