@@ -2,23 +2,40 @@ from chemwar import db
 from flask_login import UserMixin
 
 
-class User(db.Model, UserMixin):
+class Users(db.Model, UserMixin):
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(16), unique=True, nullable=False)
     password = db.Column(db.String(64), nullable=False)
-    email = db.Column(db.String(32), unique=True, nullable=False)
-    admin = db.Column(db.Boolean, default=False, nullable=False)
-
+    # 0 - General User   1 - Group Manager   2 - Admin 
+    level = db.Column(db.Integer, default=False, nullable=False)
+    group = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    initial = db.Column(db.String(16), nullable=False)
+    surname = db.Column(db.String(32), nullable=False)
+    blood_group = db.Column(db.String(16), nullable=False)
+    med_tag = db.Column(db.Boolean, default=False, nullable=False)
+    
     def __repr__(self):
         # __repr__ to represent itself in the form of a string
         return "#{0} - Username: {1} | Password: {2} | Admin: {3}".format(
-            self.id, self.username, self.password, self.admin
+            self.id, self.username, self.password, self.level
         )
 
-class Cordon(db.Model):
+class Groups(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(16), unique=True, nullable=False)
+    
+    def __repr__(self):
+        # __repr__ to represent itself in the form of a string
+        return "#{0}".format(
+            self.id
+        )
+        
+class Cordons(db.Model):
+    
+    id = db.Column(db.Integer, primary_key=True)
+    cordon_name = db.Column(db.String(64), nullable=False)
     cordon_size = db.Column(db.Integer, nullable=False)
     down_wind = db.Column(db.Boolean, default=False, nullable=False)
     down_wind_size = db.Column(db.Integer, nullable=False)
@@ -39,4 +56,17 @@ class CBRN(db.Model):
         # __repr__ to represent itself in the form of a string
         return "#{0} - Type: {1}".format(
             self.id, self.type
+        )
+    
+class Reports(db.Model):
+    
+    id = db.Column(db.Integer, primary_key=True)
+    cordon_type = db.Column(db.Integer, db.ForeignKey("cordons.id", ondelete="CASCADE"), nullable=False)
+    reported_by = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    
+    def __repr__(self):
+        # __repr__ to represent itself in the form of a string
+        return "#{0}".format(
+            self.id
         )
