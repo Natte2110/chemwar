@@ -1,6 +1,6 @@
-from flask import render_template, request, redirect, flash, url_for, jsonify
+from flask import render_template, request, redirect, flash, url_for, jsonify, session
 from chemwar import app, db
-from chemwar.models import User, Cordon, CBRN
+from chemwar.models import Users, Cordons, CBRN, Groups, Reports
 import flask_login as fl
 from hashlib import sha256
 from datetime import datetime
@@ -9,8 +9,8 @@ import os
 
 login_manager = fl.LoginManager(app)
 login_manager.login_view = 'sign_in'
-# PATH_TO_IMAGES = '/'.join(app.config['UPLOAD_FOLDER'].split("/")[-2:])
-
+current_sessions = {}
+    
 @login_manager.user_loader
 def load_user(id):
     """Loads the current user and returns it as a query object.
@@ -22,7 +22,8 @@ def load_user(id):
     Returns:
         A User object returned from a query on the User table.
     """
-    return User.query.get(int(id))
+    
+    return Users.query.get(int(id))
 
 @app.route("/")
 def home():
@@ -31,9 +32,13 @@ def home():
     Returns:
         The index.html page with the title of "Home"
     """
-    return render_template("index.html", title="Home")
+    if fl.current_user.is_authenticated:
+        current_sessions[fl.current_user.id] = fl.current_user.username
+    no_current_users = len(current_sessions)
+    return render_template("index.html", title="Home", no_current_users=no_current_users)
 
 @app.route("/chemwar-viewer")
+@fl.login_required
 def chemwar_viewer():
     """Provides routing for the website's viewer page
 
@@ -52,11 +57,12 @@ def sign_in():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        user = User.query.filter_by(username=username).first()
+        user = Users.query.filter_by(username=username).first()
         # encrypted_password = sha256(password.encode("utf-8")).hexdigest()
         if user and (user.password == password):
             fl.login_user(user)
             # flash(f"Welcome {username}!")
+            current_sessions[fl.current_user.id] = fl.current_user.username
             return redirect(url_for('home'))
         else:
             flash(f"User account not found.")
@@ -72,5 +78,6 @@ def logout():
     Returns:
         The home page.
     """
+    current_sessions.pop(fl.current_user.id)
     fl.logout_user()
     return redirect(url_for('home'))
