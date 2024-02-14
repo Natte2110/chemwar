@@ -10,7 +10,10 @@ import os
 login_manager = fl.LoginManager(app)
 login_manager.login_view = 'sign_in'
 current_sessions = {}
-    
+   
+def get_user_group(id):
+    return Groups.query.filter_by(id=id).first().name
+
 @login_manager.user_loader
 def load_user(id):
     """Loads the current user and returns it as a query object.
@@ -32,10 +35,16 @@ def home():
     Returns:
         The index.html page with the title of "Home"
     """
+    
     if fl.current_user.is_authenticated:
+        fl.current_user.group_name = get_user_group(fl.current_user.group)
         current_sessions[fl.current_user.id] = fl.current_user.username
     no_current_users = len(current_sessions)
-    return render_template("index.html", title="Home", no_current_users=no_current_users)
+    return render_template(
+        "index.html", 
+        title="Dashboard", 
+        no_current_users=no_current_users,
+        )
 
 @app.route("/chemwar-viewer")
 @fl.login_required
@@ -45,7 +54,77 @@ def chemwar_viewer():
     Returns:
         The index.html page with the title of "Viewer"
     """
+    if fl.current_user.is_authenticated:
+        fl.current_user.group_name = get_user_group(fl.current_user.group)
+        current_sessions[fl.current_user.id] = fl.current_user.username
     return render_template("viewer.html", title="Viewer")
+
+@app.route("/accounts", methods=["GET", "POST"])
+@fl.login_required
+def accounts():
+    """Provides routing for the website's viewer page
+
+    Returns:
+        The index.html page with the title of "Viewer"
+    """
+    if fl.current_user.is_authenticated:
+        fl.current_user.group_name = get_user_group(fl.current_user.group)
+        current_sessions[fl.current_user.id] = fl.current_user.username
+    if request.method == "POST":
+        data = request.json
+        username = data.get('username')
+        print(data)
+        if Users.query.filter_by(username=username).first() is None:
+            try:
+                user = Users(
+                    username=username,
+                    password=data.get('password'),
+                    level=data.get('level'),
+                    group=data.get('group'),
+                    initial=data.get('initial'),
+                    surname=data.get('surname'),
+                    blood_group=data.get('blood_group'),
+                    med_tag=data.get('med_tag')
+                )
+                db.session.add(user)
+                db.session.commit()
+            except:
+                return jsonify({"success": False, "message":"Unkown Server Error"})
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "message":"Username Already Exists"})
+    else:
+        if fl.current_user.level >= 2:
+            return render_template(
+                "accounts.html", 
+                title="Accounts",
+                users=Users.query.all(),
+                groups=Groups.query.all()
+                )
+        else:
+            no_current_users = len(current_sessions)
+            return render_template(
+            "index.html", 
+            title="Dashboard", 
+            no_current_users=no_current_users,
+            )
+        
+@app.route("/delete-account", methods=["GET", "POST"])
+@fl.login_required
+def delete_account():
+    if request.method == 'POST':
+        data = request.json
+        id = data.get('id')
+        print(data)
+        try:
+            user_to_delete = Users.query.filter_by(id=id).first()
+            db.session.delete(user_to_delete)
+            db.session.commit()
+        except:
+            return jsonify({"success": False, "message":"Unkown Server Error"})
+        return jsonify({"success": True})
+    else:
+        return redirect(url_for('home'))
 
 @app.route("/sign-in", methods=["GET", "POST"])
 def sign_in():
