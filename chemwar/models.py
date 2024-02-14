@@ -28,8 +28,8 @@ class Groups(db.Model):
     
     def __repr__(self):
         # __repr__ to represent itself in the form of a string
-        return "#{0}".format(
-            self.id
+        return "{0}".format(
+            self.name
         )
         
 class Cordons(db.Model):
