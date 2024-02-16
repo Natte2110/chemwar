@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid pt-4">
+
+    <!-- Page Heading -->
+    <!-- <h1 class="h3 mb-2 text-gray-800">Account Management</h1>
+    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+    <!-- ChemWaR User Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h5 class="m-0 font-weight-bold users-table-title">ChemWaR Groups</h5>
+            <a href="#" id="add-group" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50" aria-hidden="true"></i> Add Group</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Group Name</th>
+                            <th>Members</th>
+                            <th>Manage Members</th>
+                            <th>Delete Group</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for group in groups %}
+                        <tr>
+                            <td>{{ group.id }}</td>
+                            <td>{{group.name}}</td>
+                            <td>{{group.member_count}}</td>
+                            {% if group.id == 1 or group.id == 2 %}
+                            <td></td>
+                            {% else %}
+                            <td class="text-center text-success">
+                                <a href="#" id="manage-{{ group.id }}" class=" btn btn-sm btn-warning group-manage shadow-sm">
+                                    <i class="fas fa-list-check fa-sm text-white-50" aria-hidden="true"></i></a>
+
+                            </td>
+                            {% endif %}
+                            {% if group.id == 1 or group.id == 2 %}
+                            <td></td>
+                            {% else %}
+                            <td class="text-center text-danger">
+                                <a href="#" id="delete-{{ group.id }}"
+                                    class="btn btn-sm btn-danger delete-button shadow-sm">
+                                    <i class="fas fa-trash-can fa-sm text-white-50" aria-hidden="true"></i></a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="group-management-table" class="container-fluid pt-4">
+
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+<!-- Add Group Modal-->
+<div class="modal fade" id="add-group-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content add-group-content">
+            <form autocomplete="off" action="{{url_for('groups')}}" method="POST" id="add-group-form">
+                <h3 class="text-center">Add Group</h3>
+                <div class="field">
+                    <i class="fas fa-file-signature fa-sm fa-fw mr-2"></i>
+                    <input type="text" name="group-name" id="group-name" placeholder="Group Name" required>
+                </div>
+                <button type="submit">Add Group</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-group-modal" tabindex="-1" aria-labelledby="delete-group-modal-label"
+    aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete-group-modal-label">Delete Group</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div id="group-delete-check-div" class="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger" href="#" id="delete-confirm">Delete Group</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Group Modal-->
+<div class="modal fade" id="add-user-to-group-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content add-group-content">
+            <form autocomplete="off" action="{{url_for('groups')}}" method="POST" id="add-user-to-group-form">
+                <h3 class="text-center">Add User To Group</h3>
+                <div class="field">
+                    <select name="user-list" id="user-list" required>
+                        {% for user in users %}
+                            {% if user.level <=1 %}
+                            <option value="{{user.id}}">{{user.username}} - {% for group in groups %}
+                                {% if group.id == user.group %}
+                                    {{group.name}}
+                                {% endif %}
+                            {% endfor %}</option>
+                            {%endif%}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit">Add User</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script src="{{ url_for('static',filename='js/group-management.js') }}"></script>
+
+{% endblock %}
