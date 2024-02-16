@@ -39,7 +39,7 @@
                             <td>{{group.name}}</td>
                             <td>{{group.member_count}}</td>
                             {% if group.id == 1 or group.id == 2 %}
-                            <td></td>
+                            <td class="text-center">Cannot Edit Group</td>
                             {% else %}
                             <td class="text-center text-success">
                                 <a href="#" id="manage-{{ group.id }}" class=" btn btn-sm btn-warning group-manage shadow-sm">
@@ -48,7 +48,7 @@
                             </td>
                             {% endif %}
                             {% if group.id == 1 or group.id == 2 %}
-                            <td></td>
+                            <td class="text-center">Cannot Delete Group</td>
                             {% else %}
                             <td class="text-center text-danger">
                                 <a href="#" id="delete-{{ group.id }}"
