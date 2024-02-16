@@ -74,7 +74,7 @@ const createUserTable = (result, groupName, groupID) => {
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h5 id="${groupID}" class="m-0 font-weight-bold users-table-title">${groupName}</h5>
-            <a href="#" id="add-user-group" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm">
+            <a href="#" id="add-user-group" class="d-none d-inline-block btn btn-sm btn-success shadow-sm">
                 <i class="fas fa-plus fa-sm text-white-50" aria-hidden="true"></i> Add User</a>
         </div>
         <div class="card-body">
