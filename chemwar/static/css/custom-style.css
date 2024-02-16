@@ -124,7 +124,15 @@ main {
   color: white;
 }
 
-
+@media (max-width: 768px) {
+  .sign-in-container {
+    padding: 0;
+    padding-top: 5rem;
+  }
+  .fa-bars {
+    color: #858796;
+  }
+}
 
 .users-table-title{
   float: left;
