@@ -102,12 +102,7 @@ def accounts():
                 groups=Groups.query.all()
                 )
         else:
-            no_current_users = len(current_sessions)
-            return render_template(
-            "index.html", 
-            title="Dashboard", 
-            no_current_users=no_current_users,
-            )
+            return redirect(url_for('home'))
         
 @app.route("/delete-account", methods=["GET", "POST"])
 @fl.login_required
@@ -125,6 +120,100 @@ def delete_account():
         return jsonify({"success": True})
     else:
         return redirect(url_for('home'))
+    
+@app.route("/groups", methods=["GET", "POST"])
+@fl.login_required
+def groups():
+    """Provides routing for the website's viewer page
+
+    Returns:
+        The index.html page with the title of "Viewer"
+    """
+    if fl.current_user.is_authenticated:
+        fl.current_user.group_name = get_user_group(fl.current_user.group)
+        current_sessions[fl.current_user.id] = fl.current_user.username
+    if request.method == "POST":
+        data = request.json
+        group_name = str(data.get('group_name'))
+        print(data)
+        print(group_name)
+        print(Groups.query.filter_by(name=group_name).first())
+        if Groups.query.filter_by(name=group_name).first() is None:
+            try:
+                group = Groups(
+                    name=group_name
+                )
+                db.session.add(group)
+                db.session.commit()
+            except:
+                return jsonify({"success": False, "message":"Error"})
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "message":"Group Already Exists"})
+    else:
+        if fl.current_user.level >= 2:
+            groups = Groups.query.all()
+            for group in groups:
+                group.member_count = len(Users.query.filter_by(group=group.id).all())
+            return render_template(
+                "groups.html", 
+                title="Groups",
+                users=Users.query.all(),
+                groups=groups
+                )
+        else:
+            return redirect(url_for('home'))
+
+@app.route("/delete-group", methods=["GET", "POST"])
+@fl.login_required
+def delete_group():
+    if request.method == 'POST':
+        data = request.json
+        id = data.get('id')
+        for user in Users.query.all():
+            if int(user.group) == int(id):
+                user_to_change = Users.query.filter_by(id=user.id).first()
+                user_to_change.group = 2
+                db.session.commit()
+        try:
+            group_to_delete = Groups.query.filter_by(id=id).first()
+            db.session.delete(group_to_delete)
+            db.session.commit()
+        except:
+            return jsonify({"success": False, "message":"Unkown Server Error"})
+        return jsonify({"success": True})
+    else:
+        return redirect(url_for('home'))
+    
+@app.route("/add-user-group", methods=["GET", "POST"])
+@fl.login_required
+def add_user_group():
+    if request.method == 'POST':
+        data = request.json
+        user_id = data.get('user_id')
+        group_id = data.get('group_id')
+        try:
+            user = Users.query.filter_by(id=user_id).first()
+            user.group = group_id
+            db.session.commit()
+        except:
+            return jsonify({"success": False, "message":"Unkown Server Error"})
+        return jsonify({"success": True})
+    else:
+        return redirect(url_for('home'))
+    
+@app.route("/group-users/<group_id>")
+def users_in_group(group_id):
+    
+    users_in_group = []
+    for user in Users.query.filter_by(group=group_id):
+        users_in_group.append(
+            {
+                "id": user.id, 
+                "username": user.username,
+                "surname": user.surname
+            })
+    return jsonify({"users": users_in_group})
 
 @app.route("/sign-in", methods=["GET", "POST"])
 def sign_in():
