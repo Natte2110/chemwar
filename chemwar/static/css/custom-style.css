@@ -124,12 +124,116 @@ main {
   color: white;
 }
 
+
+
+.users-table-title{
+  float: left;
+  height: 1.5rem;
+  line-height: 1.5rem;
+}
+
+#add-user,
+#add-group,
+#add-user-group{
+  float: right;
+}
+
+#add-user-modal,
+#add-group-modal  {
+  height: calc(100vh - 4.375rem);
+  width: 100%;
+  padding: 5rem;
+}
+
+.add-user-content #initial{
+  width: 20%;
+}
+
+.add-user-content,
+.add-group-content{
+  background-color: transparent;
+  border: none;
+}
+
+.add-user-content form,
+.add-group-content form {
+  background-color: var(--base-color);
+  margin-top: 50vh;
+  padding: 1rem;
+  min-width: 80%;
+  margin: auto;
+  border-radius: 10px;
+  color: white;
+}
+
+.add-user-content form .field,
+.add-group-content form .field {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border-radius: 25px;
+  padding: 0.6em;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: #171717;
+  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+}
+
+.add-user-content form input,
+.add-group-content form input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #d3d3d3;
+}
+
+.add-user-content form select,
+.add-group-content form select {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #d3d3d3;
+}
+
+.add-user-content form button,
+.add-group-content form button {
+  padding: 0.5em;
+  padding-left: 1.1em;
+  padding-right: 1.1em;
+  border-radius: 5px;
+  margin-right: 0.5em;
+  border: none;
+  outline: none;
+  transition: .2s ease-in-out;
+  background-color: #252525;
+  color: white;
+  margin-top: 1rem;
+}
+
+.add-user-content form button:hover,
+.add-group-content form button:hover {
+  background-color: black;
+  color: white;
+}
+
 input:-webkit-autofill,
-input:-webkit-autofill:hover,
+input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+input:-internal-autofill-selected {
   -webkit-background-clip: text;
   -webkit-text-fill-color: #ffffff;
   transition: background-color 5000s ease-in-out 0s;
-  box-shadow: inset 0 0 20px 20px #23232329;
+  box-shadow: inset 0 0 20px 20px hsla(0, 0%, 14%, 0.161);
+  background-color: transparent!important;
 }
