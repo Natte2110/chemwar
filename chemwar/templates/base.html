@@ -10,12 +10,15 @@
     <meta name="author" content="">
 
     <title>ChemWaR | {{ title }}</title>
-
+    
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <link href="{{ url_for('static', filename='css/default-style.css') }}" rel="stylesheet">
+    {% block styles %}
+        
+    {% endblock %}
     <link href="{{ url_for('static', filename='css/custom-style.css') }}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -29,7 +32,6 @@
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-navbar sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon">
@@ -42,7 +44,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item {{ 'active' if title == 'Dashboard' else '' }}">
                 <a class="nav-link" href="{{ url_for('home') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -57,7 +59,7 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item {{ 'active' if title == 'Viewer' else '' }}">
                 <a class="nav-link" href="{{ url_for('chemwar_viewer') }}">
                     <i class="fas fa-fw fa-map"></i>
                     <span>ChemWaR Viewer</span></a>
@@ -95,14 +97,13 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
+                    <span>Forms</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                        <h6 class="collapse-header">Reporting Forms</h6>
+                        <a class="collapse-item" href="#">Report 1</a>
+                        <a class="collapse-item" href="#">Report 2</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Other Pages:</h6>
                         <a class="collapse-item" href="404.html">404 Page</a>
@@ -125,6 +126,50 @@
                     <span>Tables</span></a>
             </li>
 
+            {% if current_user.is_authenticated and current_user.level >= 1 %}
+
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Group - {{ current_user.group_name }}
+            </div>
+
+            <!-- Nav Item - View Group -->
+            <li class="nav-item">
+                <a class="nav-link" href="charts.html">
+                    <i class="fas fa-fw fa-users-viewfinder"></i>
+                    <span>View Group</span></a>
+            </li>
+
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.level >= 2 %}
+           
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Admin
+            </div>
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item {{ 'active' if title == 'Accounts' else '' }}">
+                <a class="nav-link" href="{{ url_for('accounts') }}">
+                    <i class="fas fa-fw fa-person-military-to-person"></i>
+                    <span>Account Management</span></a>
+            </li>
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item {{ 'active' if title == 'Groups' else '' }}">
+                <a class="nav-link" href="{{ url_for('groups') }}">
+                    <i class="fas fa-fw fa-people-group"></i>
+                    <span>Group Management</span></a>
+            </li>
+
+            {% endif %}
+
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -145,7 +190,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-topbar topbar static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-topbar topbar static-top">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
