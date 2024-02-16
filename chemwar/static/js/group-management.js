@@ -97,7 +97,7 @@ const createUserTable = (result, groupName, groupID) => {
                 <td>${user.username}</td>
                 <td>${user.surname}</td>
                 <td class="text-center text-danger">
-                <a href="#" id="remove-${user.id}"class="d-none d-sm-inline-block btn btn-sm btn-danger remove-user shadow-sm">
+                <a href="#" id="remove-${user.id}"class="d-none d-inline-block btn btn-sm btn-danger remove-user shadow-sm">
                         <i class="fas fa-minus fa-sm text-white-50" aria-hidden="true"></i>
                     </a>
                 </td>
