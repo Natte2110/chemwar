@@ -52,6 +52,20 @@ def create_default_user(session):
         default_group = Groups(name="Default")
         session.add(default_group)
         session.commit()
+
+def create_cbrn_types(session):
+    
+    if session.query(exists().where(CBRN.type == "Chemical")).scalar() == None:
+        chemical = CBRN(type="Chemical")
+        session.add(chemical)
+        session.commit()
+    
+    if session.query(exists().where(CBRN.type == "Biological")).scalar() == None:
+        biological = CBRN(type="Biological")
+        session.add(biological)
+        session.commit()
     
 
 create_default_user(session)
+
+create_cbrn_types(session)
