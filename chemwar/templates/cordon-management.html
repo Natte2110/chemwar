@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid pt-4">
+
+    <!-- ChemWaR Cordon Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h5 class="m-0 font-weight-bold users-table-title">ChemWaR Cordons</h5>
+            <a href="#" id="add-user" class="d-none d-inline-block btn btn-sm btn-success shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50" aria-hidden="true"></i> Add Cordon</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cordon Name</th>
+                            <th>Cordon Size</th>
+                            <th>Down Wind</th>
+                            <th>Down Wind Size</th>
+                            <th>CBRN Type</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cordon in cordons %}
+                        <tr>
+                            <td>{{ cordon.id }}</td>
+                            <td>{{cordon.cordon_name}}</td>
+                            <td>{{ cordon.cordon_size }}</td>
+                            <td>{{cordon.down_wind}}</td>
+                            <td>{{cordon.down_wind_size}}</td>
+                            <!-- <td>{{cordon.cbrn_type}}</td> -->
+                            <td>
+                                {% for c in cbrn %}
+                                    {% if c.id == cordon.cbrn_type %}
+                                        {{c.type}}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            
+                            <td class="text-center text-danger">
+                                <a href="#" id="delete-{{ cordon.id }}" class="d-none d-inline-block btn btn-sm btn-danger delete-button shadow-sm">
+                                    <i class="fas fa-trash-can fa-sm text-white-50" aria-hidden="true"></i></a>
+                               
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+<!-- Add User Modal-->
+<div class="modal fade" id="add-user-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content add-user-content">
+        <form autocomplete="off" action="{{url_for('cordon_management')}}" method="POST" id="add-user-form">
+            <h3 class="text-center">Add Cordon</h3>
+            <div class="field">
+                <input type="text" name="cordon_name" id="cordon_name" placeholder="Cordon Name" required>
+            </div>
+            <div class="field">
+                <input type="number" name="cordon_size" id="cordon_size" placeholder="Cordon Size" required>
+            </div>
+            <div class="field">
+                <input type="checkbox" name="down_wind" id="down_wind">
+                <input type="number" name="down_wind_size" id="down_wind_size" placeholder="Down Wind Distance" required>
+            </div>
+            <div class="field">
+                <select name="cbrn_type" id="cbrn_type" required>
+                    <option value="">Select CBRN Type</option>
+                    {% for type in cbrn %}
+                    <option value="{{type.id}}">{{type.type}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Add Cordon</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="delete-account-modal" tabindex="-1" aria-labelledby="delete-account-modal-label" aria-modal="true" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete-account-modal-label">Delete Account</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div id="user-delete-check-div" class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger" href="#" id="delete-confirm">Delete Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+<script src="{{ url_for('static',filename='js/cordon-management.js') }}"></script>
+
+{% endblock %}
