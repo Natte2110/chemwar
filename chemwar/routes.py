@@ -120,7 +120,7 @@ def delete_account():
         return jsonify({"success": True})
     else:
         return redirect(url_for('home'))
-    
+  
 @app.route("/groups", methods=["GET", "POST"])
 @fl.login_required
 def groups():
@@ -237,7 +237,61 @@ def sign_in():
             return render_template("sign-in.html", title="Sign In")
     else:
         return render_template("sign-in.html", title="Sign In")
+  
+@app.route("/cordon-management", methods=["GET", "POST"])
+@fl.login_required
+def cordon_management():
+    """Provides routing for the website's cordon management page
 
+    Returns:
+        The cordon-management.html page with the title of "Cordon Management"
+    """
+    if fl.current_user.is_authenticated:
+        fl.current_user.group_name = get_user_group(fl.current_user.group)
+        current_sessions[fl.current_user.id] = fl.current_user.username
+    if request.method == 'POST':
+        data = request.json
+        print(data)
+        try:
+            cordon = Cordons(
+                cordon_name=data.get('cordon_name'),
+                cordon_size=data.get('cordon_size'),
+                down_wind=data.get('down_wind'),
+                down_wind_size=data.get('down_wind_size'),
+                cbrn_type=data.get('cbrn_type'),
+            )
+            db.session.add(cordon)
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return jsonify({"success": False, "message":"Error"})
+        return jsonify({"success": True})
+    if fl.current_user.level >= 2:
+        return render_template(
+            "cordon-management.html", 
+            title="Cordon Management",
+            cordons=Cordons.query.all(),
+            cbrn = CBRN.query.all()
+            )
+    else:
+        return redirect(url_for('home'))
+
+@app.route("/delete-cordon", methods=["GET", "POST"])
+@fl.login_required
+def delete_cordon():
+    if request.method == 'POST':
+        data = request.json
+        id = data.get('id')
+        try:
+            cordon_to_delete = Cordons.query.filter_by(id=id).first()
+            db.session.delete(cordon_to_delete)
+            db.session.commit()
+        except:
+            return jsonify({"success": False, "message":"Unkown Server Error"})
+        return jsonify({"success": True})
+    else:
+        return redirect(url_for('home'))
+    
 @app.route("/logout")
 @fl.login_required
 def logout():
